@@ -1,25 +1,21 @@
-#Voici quelques modifications pour prendre en compte l'exécution sur Windows au lieu de Linux:
+# Image de base de Python 3.9
+FROM python:3.9-slim
 
-# Image de base de Python pour Windows au lieu de Linux
-FROM mcr.microsoft.com/python:3.9-windowsservercore-ltsc2022
+#Rep de travail
+#WORKDIR nous donne le repeetoire de travail
+WORKDIR /app
 
-# Installation des dépendances via PowerShell au lieu d'apt
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
-
-RUN Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201; \
-    Install-Module -Name DockerMsftProvider -Repository PSGallery -Force; \
-    Install-Package -Name Docker -ProviderName DockerMsftProvider
-
-# Copie du code sans spécification du répertoire de destination 
+#copier le code source
+#Avec la commande COPY TOUT LE contenue du projet vers le docker
 COPY . .
 
-# Exécution de pip via PowerShell
+#Dependances Python ====>>>> requirements.txt
+#RUN exécute une commande
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Définition de l'entrée de commande 
-CMD ["python", "Accueil.py"] 
+#Exposer le port sur lequel Streamlit va déboguer
+#8501 est le port par défaut de streamlit
+EXPOSE 8501
 
-# Pas de changement d'utilisateur sous Windows
-
-# Exposition du port HTTP
-EXPOSE 8000
+#Commande pour lancer l'application
+CMD ["streamlit", "run", "Accueil.py"]

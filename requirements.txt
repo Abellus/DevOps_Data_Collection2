@@ -1,7 +1,7 @@
-numpy
-bs4
 requests
-matplotlib
-pandas
 streamlit
+numpy
+pandas
 plotly
+matplotlib
+bs4
