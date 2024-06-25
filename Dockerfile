@@ -5,9 +5,9 @@ FROM python:3.9-slim
 #WORKDIR nous donne le repeetoire de travail
 WORKDIR /app
 
-#Dependances Python ====>>>> requiements.txt
+#Dependances Python ====>>>> requirements.txt
 #RUN exécute une commande
-RUN pip install --no-cache-dir -r requiements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
 
 #copier le code source
 #Avec la commande COPY TOUT LE contenue du projet vers le docker
