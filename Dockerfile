@@ -1,21 +1,41 @@
-# Image de base de Python 3.9
-FROM python:3.9-slim
+# Voici quelques suggestions pour améliorer votre Dockerfile:
 
-#Rep de travail
-#WORKDIR nous donne le repeetoire de travail
+# Utilisez un tag explicite pour votre image de base
+FROM python:3.9-slim as base
+
+# Définissez l'utilisateur par défaut
+USER root
+
+# Installez les dépendances système 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    ssh-client \ 
+    wget \
+    netcat \
+    curl \
+    locales
+
+# Générez les locales
+#RUN locale-gen en_US.UTF-8
+
+# Créez un utilisateur non racine 
+#RUN useradd -ms /bin/bash appuser
+
+# Définissez le répertoire de travail
 WORKDIR /app
 
-#Dependances Python ====>>>> requirements.txt
-#RUN exécute une commande
-RUN pip install --no-cache-dir -r requirements.txt 
+# Copiez juste le code nécessaire
+COPY ./requirements.txt ./requirements.txt 
+COPY . . 
 
-#copier le code source
-#Avec la commande COPY TOUT LE contenue du projet vers le docker
-COPY . .
+# Installez les dépendances Python
+RUN pip install --no-cache-dir -r requirements.txt
 
-#Exposer le port sur lequel Streamlit va déboguer
-#8501 est le port par défaut de streamlit
+# Changez d'utilisateur
+USER appuser
+
+# Exposez le port
 EXPOSE 8501
 
-#Commande pour lancer l'application
-CMD ["streamlit", "run", "Accueil.py"]
+# Définissez l'entrée de commande
+ENTRYPOINT ["streamlit","run","Accueil.py"]
