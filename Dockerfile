@@ -1,41 +1,25 @@
-# Voici quelques suggestions pour améliorer votre Dockerfile:
+#Voici quelques modifications pour prendre en compte l'exécution sur Windows au lieu de Linux:
 
-# Utilisez un tag explicite pour votre image de base
-FROM python:3.9-slim as base
+# Image de base de Python pour Windows au lieu de Linux
+FROM mcr.microsoft.com/python:3.9-windowsservercore-ltsc2022
 
-# Définissez l'utilisateur par défaut
-USER root
+# Installation des dépendances via PowerShell au lieu d'apt
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
 
-# Installez les dépendances système 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    ssh-client \ 
-    wget \
-    netcat \
-    curl \
-    locales
+RUN Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201; \
+    Install-Module -Name DockerMsftProvider -Repository PSGallery -Force; \
+    Install-Package -Name Docker -ProviderName DockerMsftProvider
 
-# Générez les locales
-#RUN locale-gen en_US.UTF-8
+# Copie du code sans spécification du répertoire de destination 
+COPY . .
 
-# Créez un utilisateur non racine 
-#RUN useradd -ms /bin/bash appuser
-
-# Définissez le répertoire de travail
-WORKDIR /app
-
-# Copiez juste le code nécessaire
-COPY ./requirements.txt ./requirements.txt 
-COPY . . 
-
-# Installez les dépendances Python
+# Exécution de pip via PowerShell
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Changez d'utilisateur
-USER appuser
+# Définition de l'entrée de commande 
+CMD ["python", "Accueil.py"] 
 
-# Exposez le port
-EXPOSE 8501
+# Pas de changement d'utilisateur sous Windows
 
-# Définissez l'entrée de commande
-ENTRYPOINT ["streamlit","run","Accueil.py"]
+# Exposition du port HTTP
+EXPOSE 8000
