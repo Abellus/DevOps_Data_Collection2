@@ -1,18 +1,26 @@
+#Nom du Workflow : Docker Image CI
 name: Docker Image CI
 
+#Spécifie les évènements qui déclenchent le Workflow
 on:
+#Par un push sur la branche main
   push:
     branches: [ "main" ]
+#Ou par un pull_request sur la branche main
   pull_request:
     branches: [ "main" ]
 
+#Contenir la liste des taches a exécuter
 jobs:
 
+  # La tache build
   build:
-
+    # On spécifie L'OS(ubuntu-latest) de la machine virtuel ou la tâche doit s'executer 
     runs-on: ubuntu-latest
-
+    #Lister les étapes du job "build"
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      # Etape ou est executer la commande qui permet de construire l'image Docker
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag demo:$(date +%s)
