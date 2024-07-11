@@ -47,4 +47,4 @@ jobs:
     - name: Push Docker image
       #run: docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/demo:${{ github.sha }}
       #run: docker push ${{ env.REGISTRY }}:${{ github.sha }}
-      run: docker push ${{ env.REGISTRY }}:lastest
+      run: docker push ${{ env.REGISTRY }}:latest
