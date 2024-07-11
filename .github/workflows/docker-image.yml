@@ -29,8 +29,11 @@ jobs:
       # Etape ou est executer la commande qui permet de construire l'image Docker
     - name: Build the Docker image
       #run: docker build . --file Dockerfile --tag demo:$(date +%s)
-      run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{github.repository }}/ demo:${{ github.sha }}
-      
+      #run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{github.repository }}/ demo:${{ github.sha }}
+      #run: docker build . -f Dockerfile --tag "${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}"
+      #run: docker build . -f Dockerfile --tag "ghcr.io/abellus/devops_data_collection2:$sha"
+      run: docker build . --file Dockerfile --tag "${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}"
+       
     # Login against a Docker registry except on PR
     # https://github.com/docker/login-action
     - name: Log into registry ${{ env.REGISTRY }}
