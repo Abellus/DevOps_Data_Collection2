@@ -3,4 +3,4 @@ version: '3.8'
 services:
   demo:
     image: abellus/demo1:latest
-    deploy:
+    ports: -"8501:8501"
