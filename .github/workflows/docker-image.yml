@@ -29,7 +29,7 @@ jobs:
       # Etape ou est executer la commande qui permet de construire l'image Docker
     - name: Build the Docker image
       #run: docker build . --file Dockerfile --tag demo:$(date +%s)
-      run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{github.repository_owner }}/ demo:${{ github.sha }}
 
     # Login against a Docker registry except on PR
     # https://github.com/docker/login-action
