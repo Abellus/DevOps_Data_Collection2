@@ -1,6 +1,12 @@
 #Nom du Workflow : Docker Image CI
 name: Docker Image CI
 
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+
 #Spécifie les évènements qui déclenchent le Workflow
 on:
 #Par un push sur la branche main
@@ -12,7 +18,6 @@ on:
 
 #Contenir la liste des taches a exécuter
 jobs:
-
   # La tache build
   build:
     # On spécifie L'OS(ubuntu-latest) de la machine virtuel ou la tâche doit s'executer 
@@ -23,4 +28,18 @@ jobs:
       uses: actions/checkout@v4
       # Etape ou est executer la commande qui permet de construire l'image Docker
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag demo:$(date +%s)
+      #run: docker build . --file Dockerfile --tag demo:$(date +%s)
+      run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+    # Login against a Docker registry except on PR
+    # https://github.com/docker/login-action
+    - name: Log into registry ${{ env.REGISTRY }}
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Push Docker image
+      run: docker push ${{ env.REGISTRY }}/${{github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
