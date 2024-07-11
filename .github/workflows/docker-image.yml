@@ -5,7 +5,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: Abellus/DevOps_Data_Collection2
 
 #Spécifie les évènements qui déclenchent le Workflow
 on:
@@ -29,10 +29,10 @@ jobs:
       # Etape ou est executer la commande qui permet de construire l'image Docker
     - name: Build the Docker image
       #run: docker build . --file Dockerfile --tag demo:$(date +%s)
-      #run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{github.repository }}/ demo:${{ github.sha }}
+      run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{github.repository }}/ demo:${{ github.sha }}
       #run: docker build . -f Dockerfile --tag "${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}"
       #run: docker build . -f Dockerfile --tag "ghcr.io/abellus/devops_data_collection2:$sha"
-      run: docker build . --file Dockerfile --tag "ghcr.io/Abellus/DevOps_Data_Collection2:e6da5501108c161b284212365bef459fd6a63643"
+      #run: docker build . --file Dockerfile --tag "ghcr.io/Abellus/DevOps_Data_Collection2:e6da5501108c161b284212365bef459fd6a63643"
       #run: docker build . --file Dockerfile --tag "${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}"
        
     # Login against a Docker registry except on PR
