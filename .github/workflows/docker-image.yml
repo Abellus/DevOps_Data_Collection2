@@ -1,50 +1,49 @@
-#Nom du Workflow : Docker Image CI
-name: Docker Image CI
+# Docker Image Build and Deploy Workflow
+name: Docker Image Build and Deploy
 
 env:
-  # Use docker.io for Docker Hub if empty
-  #REGISTRY: ghcr.io
-  REGISTRY: abellus/demo1
-  # github.repository as <account>/<repo>
+  # Registry Docker où seront stockés les images
+  REGISTRY: abellus/demo1 
+  # Nom de l'image qui sera construit
   IMAGE_NAME: ${{ github.repository }}
 
-#Spécifie les évènements qui déclenchent le Workflow
 on:
-#Par un push sur la branche main
+  # Déclenchement sur push dans la branche main
   push:
-    branches: [ "main" ]
-#Ou par un pull_request sur la branche main
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+  # Déclenchement sur pull request dans la branche main 
+  pull_request: 
+    branches:
+      - main
 
-#Contenir la liste des taches a exécuter
+  # Définition du job
 jobs:
-  # La tache build
-  build:
-    # On spécifie L'OS(ubuntu-latest) de la machine virtuel ou la tâche doit s'executer 
+  # Système d'exploitation de la machine virtuelle
+  build-and-deploy:
     runs-on: ubuntu-latest
-    #Lister les étapes du job "build"
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-      # Etape ou est executer la commande qui permet de construire l'image Docker
-    - name: Build the Docker image
-      #run: docker build . --file Dockerfile --tag demo:$(date +%s)
-      #run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{ github.repository_owner }}/demo:${{ github.sha }}
-      #run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}:${{ github.sha }}
-      run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}:latest
-     # Login against a Docker registry except on PR
-     # https://github.com/docker/login-action
-     #- name: Log into registry ${{ env.REGISTRY }}
-     # if: github.event_name != 'pull_request'
-     # uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
-     # with:
-     #   registry: ${{ env.REGISTRY }}
-     #   username: ${{ github.actor }}
-     #   password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Log into registry ${{ env.REGISTRY }}
-      run: docker login -u ${{ secrets.DOCKHERHUB_USERNAME }} -p ${{ secrets.DOCKHERHUB_TOKEN }}
-    - name: Push Docker image
-      #run: docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/demo:${{ github.sha }}
-      #run: docker push ${{ env.REGISTRY }}:${{ github.sha }}
-      run: docker push ${{ env.REGISTRY }}:latest
+      # Etape : récupération du dépôt
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      # Etape : authentification sur le registry
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }} 
+
+      # Etape : construction et push de l'image
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ github.repository_owner }}/demo:latest .
+          docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/demo:latest
+
+      # Etape : déploiement sur Heroku
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.13.15
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "devops_data_collection" 
+          heroku_email: "bellomay14@gmail.com"
