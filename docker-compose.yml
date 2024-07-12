@@ -1,6 +1,15 @@
+# Version du format docker-compose 
 version: '3.8'
 
+# Services définis
 services:
+
+  # Service demo
   demo:
+
+    # Image à utiliser 
     image: abellus/demo1:latest
-    ports: -"8501:8501"
+
+    # Définition des ports exposés
+    ports:
+      - "8501:8501"
