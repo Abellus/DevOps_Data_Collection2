@@ -41,9 +41,9 @@ jobs:
           docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/demo:latest
 
       # Etape : déploiement sur Heroku
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.13.15
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "devops_data_collection" 
-          heroku_email: "bellomay14@gmail.com"
+      #- name: Deploy to Heroku
+      #  uses: akhileshns/heroku-deploy@v3.13.15
+      #  with:
+      #    heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+      #    heroku_app_name: "devops-data-collection" 
+      #    heroku_email: "bellomay14@gmail.com"
