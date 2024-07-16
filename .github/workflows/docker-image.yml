@@ -32,3 +32,4 @@ jobs:
       run: docker login -u ${{ secrets.DOCKHERHUB_USERNAME }} -p ${{ secrets.DOCKHERHUB_TOKEN }}
     - name: Push Docker image
       run: docker push ${{ env.REGISTRY }}:latest
+
